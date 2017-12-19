@@ -17,7 +17,9 @@ import matplotlib.pyplot as plt
 plt.subplot2grid((2,3),(0,0))             
 data_train.Survived.value_counts().plot(kind='bar')
 plt.title(u"Survived (1 is alive)") 
-plt.ylabel(u"number") 
+plt.ylabel(u"number")
+###测试添加的代码git
+
 
 plt.subplot2grid((2,3),(0,1))      #船舱的人数分布     
 data_train.Pclass.value_counts().plot(kind='bar')
