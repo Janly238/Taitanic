@@ -17,9 +17,7 @@ import matplotlib.pyplot as plt
 plt.subplot2grid((2,3),(0,0))             
 data_train.Survived.value_counts().plot(kind='bar')
 plt.title(u"Survived (1 is alive)") 
-plt.ylabel(u"number")
-###测试添加的代码git
-
+plt.ylabel(u"number") 
 
 plt.subplot2grid((2,3),(0,1))      #船舱的人数分布     
 data_train.Pclass.value_counts().plot(kind='bar')
@@ -92,6 +90,7 @@ cabinSupvived=pd.DataFrame({'cabinNotnull':cabinNotnull,'cabinNull':cabinNull})
 cabinSupvived.plot(kind='bar')
 
 #############################################################  processing
+#Age等步长平滑处理
 missNum=len(data_train.loc[data_train.Age.isnull(),'Age'])
 sub=data_train.Age.max()-data_train.Age.min()
 sum=setp=sub/missNum
@@ -136,42 +135,42 @@ print(metrics.roc_auc_score(pred,yTest))
 print(cross_validation.cross_val_score(clf,all_Data[:,1:],all_Data[:,0],n_jobs=4,cv=10))
 
 
-###########  processes test data
-#==============================================================================
-# data_test = pd.read_csv("/mnt/share/Titanic/data/test.csv")
-# missNum=len(data_test.loc[data_test.Age.isnull(),'Age'])
-# sub=data_test.Age.max()-data_test.Age.min()
-# sum=setp=sub/missNum
-# Age_new=np.float64(np.arange(missNum))
-# for i in range(missNum):
-#     Age_new[i]=sum
-#     sum+=setp
-# data_test.loc[data_test.Age.isnull(),'Age']=Age_new
-# data_test.loc[data_test.Cabin.notnull(),'Cabin']='1'
-# data_test.loc[data_test.Cabin.isnull(),'Cabin']='0'
-# 
-# dummies_Cabin=pd.get_dummies(data_test.Cabin,prefix='Cabin')
-# dummies_Sex=pd.get_dummies(data_test.Sex,prefix='Sex')
-# dummies_Pclass=pd.get_dummies(data_test.Pclass,prefix='Pclass')
-# dummies_Embarked=pd.get_dummies(data_test.Embarked,prefix='Embarked')
-# test_Scalled=pd.concat([data_test,dummies_Cabin,dummies_Sex,dummies_Pclass,dummies_Embarked],axis=1)
-# test_Scalled.drop(['Cabin','Sex','Pclass','Embarked','Name','Ticket'],axis=1,inplace=True)
-# test_Scalled.loc[test_Scalled.Fare.isnull(),'Fare']=test_Scalled.Fare.mean()              
-# 
-# 
-# data=scaler.fit(test_Scalled.Age)
-# test_Scalled['Age_scaled']=scaler.fit_transform(test_Scalled.Age,data)
-# 
-# test_Scalled.loc[test_Scalled.Fare.isnull(),'Fare']=test_Scalled.Fare.mean()              
-# data=scaler.fit(test_Scalled.Fare)
-# test_Scalled['Fare_scaled']=scaler.fit_transform(test_Scalled.Fare,data)
-# 
-# all_TestData=test_Scalled
-# all_TestData.drop(['PassengerId','Age','Fare'],axis=1,inplace=True)
-# all_TestData=all_TestData.as_matrix()
-# clf.fit(all_Data[:,1:],all_Data[:,0])
-# pred2=clf.predict(all_TestData)
-#               
-# result=pd.DataFrame({'PassengerId':data_test['PassengerId'].as_matrix(),'Survived':pred2.astype(np.int32)})              
-# result.to_csv('/mnt/share/Titanic/result.csv',index=False)
+##########  processes test data
+==============================================================================
+data_test = pd.read_csv("/mnt/share/Titanic/data/test.csv")
+missNum=len(data_test.loc[data_test.Age.isnull(),'Age'])
+sub=data_test.Age.max()-data_test.Age.min()
+sum=setp=sub/missNum
+Age_new=np.float64(np.arange(missNum))
+for i in range(missNum):
+    Age_new[i]=sum
+    sum+=setp
+data_test.loc[data_test.Age.isnull(),'Age']=Age_new
+data_test.loc[data_test.Cabin.notnull(),'Cabin']='1'
+data_test.loc[data_test.Cabin.isnull(),'Cabin']='0'
+
+dummies_Cabin=pd.get_dummies(data_test.Cabin,prefix='Cabin')
+dummies_Sex=pd.get_dummies(data_test.Sex,prefix='Sex')
+dummies_Pclass=pd.get_dummies(data_test.Pclass,prefix='Pclass')
+dummies_Embarked=pd.get_dummies(data_test.Embarked,prefix='Embarked')
+test_Scalled=pd.concat([data_test,dummies_Cabin,dummies_Sex,dummies_Pclass,dummies_Embarked],axis=1)
+test_Scalled.drop(['Cabin','Sex','Pclass','Embarked','Name','Ticket'],axis=1,inplace=True)
+test_Scalled.loc[test_Scalled.Fare.isnull(),'Fare']=test_Scalled.Fare.mean()              
+
+
+data=scaler.fit(test_Scalled.Age)
+test_Scalled['Age_scaled']=scaler.fit_transform(test_Scalled.Age,data)
+
+test_Scalled.loc[test_Scalled.Fare.isnull(),'Fare']=test_Scalled.Fare.mean()              
+data=scaler.fit(test_Scalled.Fare)
+test_Scalled['Fare_scaled']=scaler.fit_transform(test_Scalled.Fare,data)
+
+all_TestData=test_Scalled
+all_TestData.drop(['PassengerId','Age','Fare'],axis=1,inplace=True)
+all_TestData=all_TestData.as_matrix()
+clf.fit(all_Data[:,1:],all_Data[:,0])
+pred2=clf.predict(all_TestData)
+              
+result=pd.DataFrame({'PassengerId':data_test['PassengerId'].as_matrix(),'Survived':pred2.astype(np.int32)})              
+result.to_csv('/mnt/share/Titanic/result.csv',index=False)
 #==============================================================================
